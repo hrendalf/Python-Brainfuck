@@ -15,12 +15,19 @@ def execute(filename):
 
 
 def evaluate(code):
-  code     = cleanup(list(code))
+  code = cleanup(list(code))
   bracemap = buildbracemap(code)
+  states = set()
 
   cells, codeptr, cellptr = [0], 0, 0
 
   while codeptr < len(code):
+    state_hash = get_state_hash(codeptr, cellptr, cells)
+    if state_hash in states:
+        print "Endless loop, codeptr=" + str(codeptr)
+        return
+    states.add(state_hash)
+
     command = code[codeptr]
 
     if command == ">":
@@ -40,7 +47,7 @@ def evaluate(code):
     if command == "]" and cells[cellptr] != 0: codeptr = bracemap[codeptr]
     if command == ".": sys.stdout.write(chr(cells[cellptr]))
     if command == ",": cells[cellptr] = ord(getch.getch())
-      
+
     codeptr += 1
 
 
@@ -58,6 +65,15 @@ def buildbracemap(code):
       bracemap[start] = position
       bracemap[position] = start
   return bracemap
+
+
+def get_state_hash(codeptr, cellptr, cells):
+  hash = 1
+  hash = hash * 17 + codeptr
+  hash = hash * 31 + cellptr
+  for i in cells:
+    hash = hash * 13 + i
+  return hash
 
 
 def main():
