@@ -20,13 +20,16 @@ def evaluate(code):
   states = set()
 
   cells, codeptr, cellptr = [0], 0, 0
+  steps = 0
 
   while codeptr < len(code):
-    state_hash = get_state_hash(codeptr, cellptr, cells)
-    if state_hash in states:
-        print "Endless loop, codeptr=" + str(codeptr)
+    if codeptr > 0 and code[codeptr - 1] == "[":
+      state_hash = get_state_hash(codeptr, cellptr, cells)
+      # print "codeptr: %d; state; %d" % (codeptr, state_hash)
+      if state_hash in states:
+        print "Endless loop, codeptr=%d; after %d steps." % (codeptr, steps) 
         return
-    states.add(state_hash)
+      states.add(state_hash)
 
     command = code[codeptr]
 
@@ -49,6 +52,7 @@ def evaluate(code):
     if command == ",": cells[cellptr] = ord(getch.getch())
 
     codeptr += 1
+    steps += 1
 
 
 def cleanup(code):
