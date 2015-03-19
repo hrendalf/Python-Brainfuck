@@ -1,5 +1,10 @@
 import brainfuck
 
-sourcecode = "+[+-]"
+sourcecode = """
++
+[
+    +-
+]
+"""
 
 brainfuck.evaluate(sourcecode)

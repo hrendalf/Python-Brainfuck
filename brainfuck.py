@@ -7,6 +7,7 @@
 
 import sys
 import getch
+import code
 
 def execute(filename):
   f = open(filename, "r")
@@ -15,7 +16,7 @@ def execute(filename):
 
 
 def evaluate(code):
-  code = cleanup(list(code))
+  code, positions = cleanup(list(code))
   bracemap = buildbracemap(code)
   states = set()
 
@@ -25,9 +26,9 @@ def evaluate(code):
   while codeptr < len(code):
     if codeptr > 0 and code[codeptr - 1] == "[":
       state_hash = get_state_hash(codeptr, cellptr, cells)
-      # print "codeptr: %d; state; %d" % (codeptr, state_hash)
       if state_hash in states:
-        print "Endless loop, codeptr=%d; after %d steps." % (codeptr, steps) 
+        line, column = positions[codeptr]
+        print "%d:%d: Detected endless loop; %d steps." % (line, column, steps)
         return
       states.add(state_hash)
 
@@ -56,8 +57,20 @@ def evaluate(code):
 
 
 def cleanup(code):
-  return filter(lambda x: x in ['.', ',', '[', ']', '<', '>', '+', '-'], code)
-
+  clean_code = []
+  positions = []
+  line, column = 1, 1
+  for c in code:
+    if c == "\n":
+      line += 1
+      column = 1
+    else:
+      if c in ['.', ',', '[', ']', '<', '>', '+', '-']:
+        clean_code.append(c)
+        positions.append((line, column))
+      column += 1
+  return (clean_code, positions)
+  
 
 def buildbracemap(code):
   temp_bracestack, bracemap = [], {}
