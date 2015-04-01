@@ -20,3 +20,5 @@ http://en.wikipedia.org/wiki/Brainfuck
 This programm is licensed under the terms of the
 DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE.
 
+(C) hrendalf 2015
+Endless loop detection added.
